@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Panier</title>
+</head>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #0f0f1a;
+    color: white;
+    min-height: 100vh;
+  }
+  nav {
+    background-color: #1a1a2e;
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #2a2a3e;
+  }
+  nav a {
+    color: #e91e63;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .contenu {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: white;
+  }
+  ul { list-style: none; }
+  li {
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+  }
+  .item-info { display: flex; flex-direction: column; gap: 5px; }
+  .item-nom { font-weight: bold; font-size: 18px; }
+  .item-prix { color: #e91e63; font-weight: bold; }
+  .btn-supprimer {
+    background: transparent;
+    border: 1px solid #e91e63;
+    color: #e91e63;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-supprimer:hover {
+    background: #e91e63;
+    color: white;
+  }
+  .total-section {
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .total-texte { font-size: 22px; font-weight: bold; }
+  .total-montant { font-size: 28px; font-weight: bold; color: #e91e63; }
+  .boutons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  .btn-vider {
+    background: transparent;
+    border: 1px solid #555;
+    color: #aaa;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-vider:hover { border-color: #e91e63; color: #e91e63; }
+  .btn-commander {
+    background: #e91e63;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    flex: 1;
+    transition: background 0.2s;
+  }
+  .btn-commander:hover { background: #c2185b; }
+  .panier-vide {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 18px;
+  }
+  .contact {
+  background-color: #1a1a2e;
+  color: white;
+  padding: 60px 40px;
+  margin-top: 40px;
+}
+.contact input,
+.contact textarea {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+}
+.contact textarea { height: 120px;
+ }
+</style>
+<body>
+  <nav>
+    <a href="index.html">← Retour à la boutique</a>
+  </nav>
+  <div class="contenu">
+    <h1>🛒 Mon Panier</h1>
+    <ul id="liste"></ul>
+    <div class="total-section">
+      <span class="total-texte">Total</span>
+      <span class="total-montant"><span id="total">0</span> €</span>
+    </div>
+    <div class="boutons">
+      <button class="btn-vider" onclick="viderPanier()">🗑 Vider le panier</button>
+      <button class="btn-commander">✅ Passer la commande</button>
+    </div>
+  </div>
+  <script>
+    let panier = JSON.parse(localStorage.getItem('panier')) || [];
+    function afficherPanier() {
+      if (panier.length === 0) {
+        document.getElementById("liste").innerHTML = 
+          '<div class="panier-vide">Votre panier est vide 🛒</div>';
+      } else {
+        document.getElementById("liste").innerHTML = panier.map((item, index) => 
+          `<li>
+            <div class="item-info">
+              <span class="item-nom">${item.nom}</span>
+              <span class="item-prix">${item.prix} €</span>
+            </div>
+            <button class="btn-supprimer" onclick="supprimer(${index})">Supprimer</button>
+          </li>`
+        ).join('');
+      }
+      let total = panier.reduce((acc, item) => acc + item.prix, 0);
+      document.getElementById("total").innerHTML = total;
+    }
+    function supprimer(index) {
+      panier.splice(index, 1);
+      localStorage.setItem('panier', JSON.stringify(panier));
+      afficherPanier();
+    }
+    function viderPanier() {
+      localStorage.removeItem('panier');
+      panier = [];
+      afficherPanier();
+    }
+    afficherPanier();
+  </script>
+  <div class="contact" id="contact">
+  <h2>Contactez-moi</h2>
+  <p>Une question ? N'hésitez pas !</p>
+  <input type="text" placeholder="Votre nom">
+  <input type="email" placeholder="Votre email">
+  <textarea placeholder="Votre message"></textarea>
+  <button>Envoyer</button>
+</div>
+</body>
+</html>
